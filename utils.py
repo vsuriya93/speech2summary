@@ -11,6 +11,19 @@ summary_model = T5ForConditionalGeneration.from_pretrained(model_name)
 
 def speech2text(file_path, process_metadata) -> str:
     # todo: add more checks here
+    """
+    Transcribe an audio file to text, and add the detected language and other
+    metadata to the process metadata dictionary.
+
+    Args:
+        file_path (str): The path to the audio file to be transcribed.
+        process_metadata (dict): A dictionary to store the metadata of the
+            audio file, including the detected language and the original
+            text.
+
+    Returns:
+        str: The original text of the audio file.
+    """
     segments, info = model.transcribe(file_path, beam_size=5)
     print("Detected language '%s' with probability %f" %
           (info.language, info.language_probability))
@@ -33,6 +46,22 @@ def speech2text(file_path, process_metadata) -> str:
 
 def rawtext2summary(input_text, process_metadata) -> str:
     # Tokenize and summarize the input text using T5
+    """
+    Take in a raw text string and use the T5 model to generate a summary.
+    The input text is tokenized and then fed into the T5 model, which generates
+    a sequence of tokens that are then decoded as a summary text string.
+    The summary is then stored in the process_metadata dictionary under the
+    key "t5_summary" and is also returned as the output of the function.
+
+    Args:
+        input_text (str): The raw text string to be summarized.
+        process_metadata (dict): A dictionary to store information about the
+            processing pipeline. The summary will be stored under the key
+            "t5_summary".
+
+    Returns:
+        str: The generated summary string.
+    """
     inputs = tokenizer.encode("summarize: " + input_text,
                               return_tensors="pt", max_length=1024, truncation=True)
     summary_ids = summary_model.generate(inputs, max_length=1000, min_length=10,

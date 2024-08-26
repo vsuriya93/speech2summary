@@ -15,13 +15,19 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
+    """
+    Displays the home page of the application.
+    """
     return render_template('index.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """
-    #todo: add more checks here + error handling and refactor into utils
+    This endpoint accepts a POST request with a file attachment.
+    It will save the file to the 'uploads' folder and then run the
+    process function on the saved file and return the result as a json
+    object.
     """
     if 'file' not in request.files:
         flash('No file part')
@@ -48,7 +54,13 @@ def upload_file():
         # return redirect(url_for('index'))
 
 
-def process(file_path):
+def process(file_path) -> dict:
+    """
+    Process an audio file and return a JSON object containing the original text, summary, and other metadata.
+
+    :param file_path: The path to the audio file to be processed.
+    :return: A JSON object containing the original text, summary, and other metadata.
+    """
     print("processing file: " + file_path)
 
     # store information in dict
